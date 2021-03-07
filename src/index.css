@@ -1,10 +1,28 @@
-* {
-  margin: 0;
-  padding: 0;
+html {
   box-sizing: border-box;
+  width: 100vw;
+  overflow-x: hidden;
 }
 
-body{
-  font-family: 'Raleway', sans-serif;
-  background-color: rgba(222, 227, 231, 0.473);
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  color: #212121;
+  background-color: #fff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
