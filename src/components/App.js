@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Loader from 'react-loader-spinner';
 import searchApi from '../servises/searchApi';
 import styles from './App.module.css';
 import Button from './button/Button';
@@ -11,9 +12,38 @@ class App extends Component {
     query: '',
     page: 1,
     pictures: [],
+    showModal: false,
+    isLoading: false,
+    largeImageURL: '',
   };
 
-  componentDidMount() {}
+  componentDidUpdate(prevState) {
+    if (prevState.page !== this.state.page) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
+
+  searchImages = () => {
+    this.setState({ isLoading: true });
+    searchApi(this.state.query, this.state.page)
+      .then(pictures => {
+        this.setState(prevState => ({
+          pictures: [...prevState.pictures, ...pictures],
+          page: prevState.page + 1,
+        }));
+      })
+      .catch(error => console.log(error))
+      .finally(() => this.setState({ isLoading: false }));
+  };
 
   onSubmit = e => {
     e.preventDefault();
@@ -23,9 +53,6 @@ class App extends Component {
         this.setState({
           pictures,
           page: 2,
-          showModal: false,
-          imgTags: '',
-          isLoading: false,
         });
       })
       .catch(error => console.log(error))
@@ -37,7 +64,14 @@ class App extends Component {
     this.setState({ query: value });
   };
 
+  getLargeImage = (largeImageURL) => {
+    this.setState({
+      largeImageURL: largeImageURL,
+    });
+  }
+
   render() {
+    const { showModal, isLoading, largeImageURL } = this.state;
     return (
       <div className={styles.App}>
         <Searchbar
@@ -45,9 +79,23 @@ class App extends Component {
           onHandleChange={this.onHandleChange}
           query={this.state.query}
         />
-        <ImageGallery pictures={this.state.pictures} />
-        <Button />
-        <Modal />
+        <ImageGallery
+          pictures={this.state.pictures}
+          onClick={this.toggleModal}
+          largeImageURL={this.getLargeImage}
+        />
+
+        {isLoading ? (
+          <Loader />
+        ) : (
+          this.state.page !== 1 && <Button onClick={this.searchImages} />
+        )}
+
+        {showModal && (
+            <Modal onClose={this.toggleModal}>
+                <img src={largeImageURL} alt="" />
+            </Modal>
+        )}
       </div>
     );
   }
