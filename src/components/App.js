@@ -26,10 +26,11 @@ class App extends Component {
     }
   }
 
-  toggleModal = () => {
+  toggleModal = e => {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
     }));
+    // this.getLargeImage(e)
   };
 
   searchImages = () => {
@@ -64,11 +65,12 @@ class App extends Component {
     this.setState({ query: value });
   };
 
-  getLargeImage = (largeImageURL) => {
+  getLargeImage = e => {
+    const largeImageURL = e.target.dataset.largeimgurl;
     this.setState({
       largeImageURL: largeImageURL,
     });
-  }
+  };
 
   render() {
     const { showModal, isLoading, largeImageURL } = this.state;
@@ -82,7 +84,8 @@ class App extends Component {
         <ImageGallery
           pictures={this.state.pictures}
           onClick={this.toggleModal}
-          largeImageURL={this.getLargeImage}
+          largeImageURL={largeImageURL}
+          getLargeImage={this.getLargeImage}
         />
 
         {isLoading ? (
@@ -92,9 +95,9 @@ class App extends Component {
         )}
 
         {showModal && (
-            <Modal onClose={this.toggleModal}>
-                <img src={largeImageURL} alt="" />
-            </Modal>
+          <Modal onClose={this.toggleModal}>
+            <img src={largeImageURL} alt="" />
+          </Modal>
         )}
       </div>
     );
